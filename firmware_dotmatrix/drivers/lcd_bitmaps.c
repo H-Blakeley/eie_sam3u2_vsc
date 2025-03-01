@@ -1276,22 +1276,43 @@ const u8 G_aau8BigFonts[][U8_LCD_BIG_FONT_ROWS][U8_LCD_BIG_FONT_COLUMN_BYTES] =
 
 
 /***************************************************************************************************************************
-*  Stich Bitmaps
+*  ^^^^ Stich Bitmaps
 ****************************************************************************************************************/
 
-const u8 aau8StichK[U8_LCD_SMALL_FONT_ROWS][U8_LCD_BIG_FONT_COLUMN_BYTES] =
 
- { /* StichK */
- {0xFF, 0x03},
- {0x01, 0x02},
- {0x01, 0x02},
- {0x01, 0x02},
- {0x01, 0x02},
- {0x01, 0x02},
- {0x01, 0x02},
- {0xFF, 0x03},};
+const u8 aau8StitchK[U8_LCD_BIG_FONT_ROWS][U8_LCD_BIG_FONT_COLUMN_BYTES] =
+{ /* BigFontStK */
+    {0x00, 0x00},
+    {0x00, 0x00},
+    {0x00, 0x00},
+    {0x00, 0x00},
+    {0x00, 0x00},
+    {0x00, 0x00},
+    {0xFF, 0x03},
+    {0x01, 0x02},
+    {0x01, 0x02},
+    {0x01, 0x02},
+    {0x01, 0x02},
+    {0x01, 0x02},
+    {0x01, 0x02},
+    {0xFF, 0x03},
+};
+    
 
- { /* BigFontStP */
+//const u8 aau8StitchK[(u8)8][(u8)10] = // change row nums to macros later
+
+//{ /* StichK */
+/*{0xFF, 0x03},
+{0x01, 0x02},
+{0x01, 0x02},
+{0x01, 0x02},
+{0x01, 0x02},
+{0x01, 0x02},
+{0x01, 0x02},
+{0xFF, 0x03},};*/
+
+const u8 aau8StitchP[(u8)8][U8_LCD_BIG_FONT_COLUMN_BYTES] = 
+{ /* StitchP */
 {0xFF, 0x03},
 {0x01, 0x02},
 {0x79, 0x02},
@@ -1302,7 +1323,20 @@ const u8 aau8StichK[U8_LCD_SMALL_FONT_ROWS][U8_LCD_BIG_FONT_COLUMN_BYTES] =
 {0xFF, 0x03},
 };
 
+const u8 aau8StitchYO[(u8)8][U8_LCD_BIG_FONT_COLUMN_BYTES] = 
+{ /* BigFontStYO */
+    {0xFF, 0x03},
+    {0x01, 0x02},
+    {0x79, 0x02},
+    {0x49, 0x02},
+    {0x49, 0x02},
+    {0x79, 0x02},
+    {0x01, 0x02},
+    {0xFF, 0x03},
+    };
 
+
+    
 
 
 

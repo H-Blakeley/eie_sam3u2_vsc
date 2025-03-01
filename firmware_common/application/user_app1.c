@@ -54,6 +54,11 @@ extern volatile u32 G_u32SystemTime1s;                    /*!< @brief From main.
 extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
 extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
 
+extern const u8 aau8StitchK; // from lcd_bitmaps
+extern const u8 aau8TestPosition; // from lcd_bitmaps
+extern const u8 G_aau8BigFonts; //from lcd_bitmaps
+extern const u8 aau8EngenuicsLogoBlack; // from lcd_bitmaps
+
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -92,6 +97,22 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  LcdClearScreen();
+  static PixelAddressType sTitleAddress;
+  LcDLoadString('Little Dove Pattern Repeat Chart', LCD_FONT_SMALL, &sTitleAddress);
+  static PixelBlockType sTryStitch; 
+  sTryStitch.u16RowStart = 10;
+  sTryStitch.u16ColumnStart = 0;
+  sTryStitch.u16RowSize = 10; // pixels wide 
+  sTryStitch.u16ColumnSize = 14; // pixels tall  
+  LcdLoadBitmap(&aau8StitchK, &sTryStitch);
+  u8 i;
+  for(i=0; i< 11; i++){
+    sTryStitch.u16ColumnStart +=10;
+    LcdLoadBitmap(&aau8StitchK, &sTryStitch);
+  }
+
+  
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,6 +161,7 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
+
      
 } /* end UserApp1SM_Idle() */
      
