@@ -403,6 +403,54 @@ static void UserApp1SM_Idle(void)
     ButtonAcknowledge(BUTTON0);
   } // if(WasButtonPressed)
 
+  static u8 u8current_row = 1; // updated based on sliders
+
+  static u8 u8row_state = 0b00000; // updated based on button1
+
+  // load check box at row level, then update the row counter
+  if(WasButtonPressed(BUTTON1)) {
+    ButtonAcknowledge(BUTTON1);
+    for(u8 i=0; i<5; i++){
+      // no wait the xor should only happen in the load pattern function
+    }
+  
+    static PixelBlockType sCheckPosition;
+    sCheckPosition.u16RowStart = 0;
+    sCheckPosition.u16ColumnStart = 12*u8current_row; // check what the row is and adjust column start
+    sCheckPosition.u16RowSize = 8; // pixels tall 
+    sCheckPosition.u16ColumnSize = 10; // pixels wide
+    // i 
+    switch(u8current_row) {
+      case 1:
+        sCheckPosition.u16ColumnStart = 12;
+        if(u8row_state &= 0b00001){ // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+          u8row_state &= 0b11110; // set first bit to 0, other bits remain the same.
+          LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+        }
+        else{
+          u8row_state |= 0b00001; // set first bit equal to 1, other bits remain the same
+          LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+        }
+        break;
+      case 2:
+        sCheckPosition.u16ColumnStart = 24;
+        u8row_state |= 0b00010; // set second bit equal to 1, other bits remain the same.
+        break;
+      case 3:
+        sCheckPosition.u16ColumnStart = 36;
+        u8row_state |= 0b00100; // set third bit to 1, other bits remain the same.
+        break;
+      case 4:
+        sCheckPosition.u16ColumnStart = 48;
+        u8row_state = 0b01000; // set fourth bit to 1, other bits remain the same.
+        break;
+      case 5:
+        sCheckPosition.u16ColumnStart = 60;
+        u8row_state = 0b10000; // set fifth bit to 1, toher bits remain the same.
+        break;
+    }
+  }
+
 
 
 
@@ -419,7 +467,8 @@ static void UserApp1SM_Idle(void)
 
      
 } /* end UserApp1SM_Idle() */
-     
+
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */

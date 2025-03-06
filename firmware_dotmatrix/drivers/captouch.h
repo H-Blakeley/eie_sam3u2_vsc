@@ -66,8 +66,6 @@ Constants / Definitions
 #define QTOUCH_MEASUREMENT_TIMEOUT  (u32)100     /*!< @brief Interval in ms between captouch sweeps */
 #define QTOUCH_DEBUG_PRINT_PERIOD   (u32)200     /*!< @brief Interval in ms between printing captouch current values */
 
-#define EIE_NO_CAPTOUCH 0 // added this line but should I remove it???
-
 #endif /* __CAPTOUCH_H */
 
 
