@@ -408,7 +408,7 @@ static void UserApp1SM_Idle(void)
   static u8 u8row_state = 0b00000; // updated based on button1
 
   // load check box at row level, then update the row counter
-  if(WasButtonPressed(BUTTON1)) {
+  if(WasButtonPressed(BUTTON1) && !(u8Legend_On)) {
     ButtonAcknowledge(BUTTON1);
     for(u8 i=0; i<5; i++){
       // no wait the xor should only happen in the load pattern function
