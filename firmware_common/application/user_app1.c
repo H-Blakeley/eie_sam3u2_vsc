@@ -314,9 +314,11 @@ State Machine Function Definitions
 static void UserApp1SM_Idle(void)
 { 
   static u8 u8Legend_On = 0;
-  if(WasButtonPressed(BUTTON0)) {
+  if(WasButtonPressed(BUTTON0)) 
+  {
     LcdClearScreen();
-    if(u8Legend_On == 0){
+    if(u8Legend_On == 0)
+    {
       LoadLegend();
       u8Legend_On = 1; 
     } // if(u8Legend_On ==0)
@@ -328,64 +330,138 @@ static void UserApp1SM_Idle(void)
     ButtonAcknowledge(BUTTON0);
   } // if(WasButtonPressed)
 
-  static u8 u8current_row = 1; // updated based on sliders
+  static u8 u8current_row = 1; // updated based on button1
 
   static u8 u8row_state = 0b00000; // updated based on button1
 
-  // load check box at row level, then update the row counter
-  if(WasButtonPressed(BUTTON1)) {
-    ButtonAcknowledge(BUTTON1);
-    if (!(u8Legend_On)) 
-    {
-      static PixelBlockType sCheckPosition;
-      sCheckPosition.u16RowStart = 0;
-      sCheckPosition.u16ColumnStart = 12*u8current_row; // check what the row is and adjust column start
-      sCheckPosition.u16RowSize = 8; // pixels tall 
-      sCheckPosition.u16ColumnSize = 10; // pixels wide
-      // i 
-      switch(u8current_row) {
-        case 1:
-          sCheckPosition.u16ColumnStart = 12;
-          if(u8row_state &= 0b00001){ // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
-            u8row_state &= 0b11110; // set first bit to 0, other bits remain the same.
-            LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
-          }
-          else{
-            u8row_state |= 0b00001; // set first bit equal to 1, other bits remain the same
-            LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
-          }
-          break;
-        case 2:
-          sCheckPosition.u16ColumnStart = 24;
-          u8row_state |= 0b00010; // set second bit equal to 1, other bits remain the same.
-          break;
-        case 3:
-          sCheckPosition.u16ColumnStart = 36;
-          u8row_state |= 0b00100; // set third bit to 1, other bits remain the same.
-          break;
-        case 4:
-          sCheckPosition.u16ColumnStart = 48;
-          u8row_state = 0b01000; // set fourth bit to 1, other bits remain the same.
-          break;
-        case 5:
-          sCheckPosition.u16ColumnStart = 60;
-          u8row_state = 0b10000; // set fifth bit to 1, toher bits remain the same.
-          break;
-      }
-    }
-  }// if(WasButtonPressed(BUTTON1)
-
-  //if(0){ // later, figure out captouch and move this if vertical is moved.
-    //static PixelAddressType sPointRS = {U8_LCD_SMALL_FONT_LINE7, U16_LCD_RIGHT_MOST_COLUMN};
-    //u8 au8TitleStr3[] = "<R";
-    // Actually that's really cumbersome, set a variable that decrements until it gets to line 0 and then back to 7.
-  //  LcdLoadString(au8TitleStr3, LCD_FONT_SMALL, U8_LCD_SMALL_FONT_LINE6); 
-//  }
+  // load check box at row level, then update the row state
+  static u8 u8AlreadyHeld = 0;
   
+  if(IsButtonHeld(BUTTON1, 2000)) 
+  {
+    if(!(u8Legend_On)) 
+    {
+      if(u8AlreadyHeld == 0)
+      {
+        u8AlreadyHeld = 1;
+        static PixelBlockType sCheckPosition;
+        sCheckPosition.u16ColumnStart = 12;
+        sCheckPosition.u16RowSize = 8; // pixels tall 
+        sCheckPosition.u16ColumnSize = 10; // pixels wide
+        switch(u8current_row)
+        {
+          case 1:
+            sCheckPosition.u16RowStart = 0; 
+            if(u8row_state &= 0b00001) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            {
+              u8row_state &= 0b11110; // set first bit to 0, other bits remain the same.
+              LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+            }
+            else
+            {
+              u8row_state |= 0b00001; // set first bit equal to 1, other bits remain the same
+              LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+            }
+            break;
+          case 2:
+            sCheckPosition.u16RowStart = 12;
+            if(u8row_state &= 0b00010) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            {
+              u8row_state &= 0b11101; // set first bit to 0, other bits remain the same.
+              LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+            }
+            else
+            {
+              u8row_state |= 0b00010; // set second bit equal to 1, other bits remain the same
+              LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+            }
+            break;
+          case 3:
+            sCheckPosition.u16RowStart = 24;
+            if(u8row_state &= 0b00100) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            {
+              u8row_state &= 0b11011; // set third bit to 0, other bits remain the same.
+              LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+            }
+            else
+            {
+              u8row_state |= 0b00100; // set third bit equal to 1, other bits remain the same
+              LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+            }
+            break;
+          case 4:
+            sCheckPosition.u16RowStart = 36;
+            if(u8row_state &= 0b01000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            {
+              u8row_state &= 0b10111; // set fourth bit to 0, other bits remain the same.
+              LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+            }
+            else
+            {
+              u8row_state |= 0b01000; // set fourth bit equal to 1, other bits remain the same
+              LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+            }
+            break;
+          case 5:
+            sCheckPosition.u16RowStart = 48;
+            if(u8row_state &= 0b10000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            {
+              u8row_state &= 0b01111; // set fifth bit to 0, other bits remain the same.
+              LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+            }
+            else
+            {
+              u8row_state |= 0b10000; // set fifth bit equal to 1, other bits remain the same
+              LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+            }
+            break;
+        } //switch(u8current_row)
+      } //if(u8AlreadyHeld)
+    } //if(!(u8LegendOn)
+  } else u8AlreadyHeld = 0; // if(WasButtonPressed(BUTTON1)
+
+  if(WasButtonPressed(BUTTON1)){
+    ButtonAcknowledge(BUTTON1);
+    
+    // change to next row
+    (u8current_row < 5) ? (u8current_row++) : (u8current_row = 1);
+    
+    static PixelBlockType aau8RowArrow;
+    aau8RowArrow.u16RowSize = 8;
+    aau8RowArrow.u16ColumnSize = 12;
 
 
 
-     
+    // load row arrow at current row
+    if(((int)u8current_row)%2 == 0){
+      // load row arrow at RS
+      u8 au8TestString[] = "<R";
+      static PixelAddressType sTestLoc = {U8_LCD_SMALL_FONT_LINE6 - 12, (U16_LCD_RIGHT_MOST_COLUMN) - 13};
+      sTestLoc.u16PixelRowAddress = 48 - (12*(u8current_row-1));
+      LcdLoadString(au8TestString, LCD_FONT_SMALL, &sTestLoc);
+
+      aau8RowArrow.u16RowStart = 36-12*(u8current_row);
+      aau8RowArrow.u16ColumnStart = 0;
+      LcdClearPixels(&aau8RowArrow);
+    }
+    else
+    {
+      static PixelAddressType sPointWSLoc;
+      sPointWSLoc.u16PixelRowAddress = 48 - (12*(u8current_row-1));
+      sPointWSLoc.u16PixelColumnAddress = 0;
+      u8 au8PointWSStr[] = "W>";
+      LcdLoadString(au8PointWSStr, LCD_FONT_SMALL, &sPointWSLoc);   
+      
+      aau8RowArrow.u16RowStart = 36-12*(u8current_row);
+      aau8RowArrow.u16ColumnStart = 144;
+      LcdClearPixels(&aau8RowArrow);
+    }
+
+
+
+  } // if(WasButtonPressed(BUTTON1))
+
+
 } /* end UserApp1SM_Idle() */
 
 
