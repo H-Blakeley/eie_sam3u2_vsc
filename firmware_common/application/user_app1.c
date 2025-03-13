@@ -149,7 +149,7 @@ void LoadLittleDove(u8 u8RowState) {
     LcdLoadBitmap(&aau8StitchK, &sRow2);
     sRow2.u16ColumnStart+=10;
     LcdLoadBitmap(&aau8StitchYO, &sRow2);
-  
+
   
     // grid row 4
     static PixelBlockType sRow4;
@@ -351,7 +351,7 @@ static void UserApp1SM_Idle(void)
         switch(u8current_row)
         {
           case 1:
-            sCheckPosition.u16RowStart = 0; 
+            sCheckPosition.u16RowStart = 48; 
             if(u8row_state &= 0b00001) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b11110; // set first bit to 0, other bits remain the same.
@@ -364,7 +364,7 @@ static void UserApp1SM_Idle(void)
             }
             break;
           case 2:
-            sCheckPosition.u16RowStart = 12;
+            sCheckPosition.u16RowStart = 36;
             if(u8row_state &= 0b00010) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b11101; // set first bit to 0, other bits remain the same.
@@ -390,7 +390,7 @@ static void UserApp1SM_Idle(void)
             }
             break;
           case 4:
-            sCheckPosition.u16RowStart = 36;
+            sCheckPosition.u16RowStart = 12;
             if(u8row_state &= 0b01000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b10111; // set fourth bit to 0, other bits remain the same.
@@ -403,7 +403,7 @@ static void UserApp1SM_Idle(void)
             }
             break;
           case 5:
-            sCheckPosition.u16RowStart = 48;
+            sCheckPosition.u16RowStart = 0;
             if(u8row_state &= 0b10000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b01111; // set fifth bit to 0, other bits remain the same.
@@ -420,43 +420,44 @@ static void UserApp1SM_Idle(void)
     } //if(!(u8LegendOn)
   } else u8AlreadyHeld = 0; // if(WasButtonPressed(BUTTON1)
 
-  if(WasButtonPressed(BUTTON1)){
+
+  if(WasButtonPressed(BUTTON1))
+  {
     ButtonAcknowledge(BUTTON1);
-    
-    // change to next row
-    (u8current_row < 5) ? (u8current_row++) : (u8current_row = 1);
-    
-    static PixelBlockType aau8RowArrow;
-    aau8RowArrow.u16RowSize = 8;
-    aau8RowArrow.u16ColumnSize = 12;
-
-
-
-    // load row arrow at current row
-    if(((int)u8current_row)%2 == 0){
-      // load row arrow at RS
-      u8 au8TestString[] = "<R";
-      static PixelAddressType sTestLoc = {U8_LCD_SMALL_FONT_LINE6 - 12, (U16_LCD_RIGHT_MOST_COLUMN) - 13};
-      sTestLoc.u16PixelRowAddress = 48 - (12*(u8current_row-1));
-      LcdLoadString(au8TestString, LCD_FONT_SMALL, &sTestLoc);
-
-      aau8RowArrow.u16RowStart = 36-12*(u8current_row);
-      aau8RowArrow.u16ColumnStart = 0;
-      LcdClearPixels(&aau8RowArrow);
-    }
-    else
+    if(u8Legend_On == 0)
     {
-      static PixelAddressType sPointWSLoc;
-      sPointWSLoc.u16PixelRowAddress = 48 - (12*(u8current_row-1));
-      sPointWSLoc.u16PixelColumnAddress = 0;
-      u8 au8PointWSStr[] = "W>";
-      LcdLoadString(au8PointWSStr, LCD_FONT_SMALL, &sPointWSLoc);   
+      // change to next row
+      (u8current_row < 5) ? (u8current_row++) : (u8current_row = 1);
       
-      aau8RowArrow.u16RowStart = 36-12*(u8current_row);
-      aau8RowArrow.u16ColumnStart = 144;
-      LcdClearPixels(&aau8RowArrow);
-    }
+      static PixelBlockType aau8LeftColumn = {0, 0, 60, 11};
+      static PixelBlockType aau8RightColumn = {0, 114, 60, 11};
+      LcdClearPixels(&aau8LeftColumn);
+      LcdClearPixels(&aau8RightColumn);
+      // load row arrow at current row
+      if(((int)u8current_row)%2 == 0){
 
+
+        // load row arrow at RS
+        u8 au8TestString[] = "<R";
+        static PixelAddressType sTestLoc = {U8_LCD_SMALL_FONT_LINE6 - 12, (U16_LCD_RIGHT_MOST_COLUMN) - 13};
+        sTestLoc.u16PixelRowAddress = 48 - (12*(u8current_row-1));
+        LcdLoadString(au8TestString, LCD_FONT_SMALL, &sTestLoc);
+
+
+      }
+      else
+      {
+        static PixelAddressType sPointWSLoc;
+        sPointWSLoc.u16PixelRowAddress = 48 - (12*(u8current_row-1));
+        sPointWSLoc.u16PixelColumnAddress = 0;
+        u8 au8PointWSStr[] = "W>";
+        LcdLoadString(au8PointWSStr, LCD_FONT_SMALL, &sPointWSLoc);   
+        
+        //aau8RowArrow.u16RowStart = 36-12*(u8current_row);
+        //aau8RowArrow.u16ColumnStart = 144;
+        //LcdClearPixels(&aau8RowArrow);
+      }
+   }
 
 
   } // if(WasButtonPressed(BUTTON1))
