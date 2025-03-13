@@ -185,6 +185,7 @@ extern const u8 aau8EngenuicsLogoBlackQ1[U8_LCD_IMAGE_ROW_SIZE_25PX][U8_LCD_IMAG
 extern const u8 aau8EngenuicsLogoBlackQ2[U8_LCD_IMAGE_ROW_SIZE_25PX][U8_LCD_IMAGE_COL_BYTES_25PX]; /*!< @brief From lcd_bitmaps.c */
 extern const u8 aau8EngenuicsLogoBlackQ3[U8_LCD_IMAGE_ROW_SIZE_25PX][U8_LCD_IMAGE_COL_BYTES_25PX]; /*!< @brief From lcd_bitmaps.c */
 extern const u8 aau8EngenuicsLogoBlackQ4[U8_LCD_IMAGE_ROW_SIZE_25PX][U8_LCD_IMAGE_COL_BYTES_25PX]; /*!< @brief From lcd_bitmaps.c */
+extern const u8 aau8KnittingLogo[U8_LCD_IMAGE_ROW_SIZE_50PX][U8_LCD_IMAGE_COL_BYTES_50PX]; /*!< @brief From lcd_bitmaps.c */
 
 extern volatile fnCode_type G_SspStateMachine;         /*!< @brief From sam3u_ssp.c */
 
@@ -215,7 +216,7 @@ static PixelBlockType Lcd_sUpdateArea;                            /*!< @brief Ar
 static PixelBlockType Lcd_sCurrentUpdateArea;                     /*!< @brief Area of LCD currently being updated */
 
 static u8 Lcd_au8MessageInit[]  = "LCD Ready\r\n";
-static u8 Lcd_au8MessageWelcome[] = "SAM3U2 DOT MATRIX";
+static u8 Lcd_au8MessageWelcome[] = "Digital Row Counter";
                                  
 static  u8 Lcd_au8SetupArray[] = {U8_LCD_BIAS_LOW, U8_LCD_ADC_SELECT_NORMAL, U8_LCD_COMMON_MODE1, U8_LCD_COMMON_MODE0, U8_LCD_DISPLAY_LINE_SETx,
                                   U8_LCD_VOLTAGTE_REG_SETx | U8_SET_BIT0 | U8_SET_BIT2,
@@ -747,7 +748,7 @@ void LcdInitialize(void)
       }
     }
   } /*   for(u8 i = 0; i < 40; i++) */
-  
+
 #else /* LCD_STARTUP_ANIMATION */
   
   /* Show static image in middle of screen */

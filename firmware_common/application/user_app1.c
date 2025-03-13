@@ -106,28 +106,24 @@ void LoadLittleDove(u8 u8RowState, u8 u8RowNum)
     }
             
     // load row arrow beside the current row
-    static PixelAddressType sPointWSLoc = {U8_LCD_SMALL_FONT_LINE6, U16_LCD_LEFT_MOST_COLUMN};
-    u8 au8PointWSStr[] = "W>";
-    LcdLoadString(au8PointWSStr, LCD_FONT_SMALL, &sPointWSLoc);
+    if(u8RowNum %2 == 0)
+    {
+      // load row arrow at RS
+      u8 au8PointRSStr[] = "<R";
+      static PixelAddressType sPointRSLoc = {U8_LCD_SMALL_FONT_LINE6 - 12, (U16_LCD_RIGHT_MOST_COLUMN) - 13};
+      sPointRSLoc.u16PixelRowAddress = 48 - (12*(u8RowNum-1));
+      LcdLoadString(au8PointRSStr, LCD_FONT_SMALL, &sPointRSLoc);
+    }
+    else
+    {
+      static PixelAddressType sPointWSLoc = {U8_LCD_SMALL_FONT_LINE6, U16_LCD_LEFT_MOST_COLUMN};
+      u8 au8PointWSStr[] = "W>";
+      sPointWSLoc.u16PixelRowAddress = 48 - (12*(u8RowNum-1));
+      LcdLoadString(au8PointWSStr, LCD_FONT_SMALL, &sPointWSLoc);      
+    }
 
-    // load row arrow at 2
-    u8 au8TestString[] = "<R";
-    static PixelAddressType sTestLoc = {U8_LCD_SMALL_FONT_LINE6 - 12, (U16_LCD_RIGHT_MOST_COLUMN) - 13};
-    LcdLoadString(au8TestString, LCD_FONT_SMALL, &sTestLoc);
+
   
-    // load check boxes
-  /*
-    static PixelBlockType sCheckBox;
-    sCheckBox.u16RowStart = 0;
-    sCheckBox.u16ColumnStart = 12;
-    sCheckBox.u16RowSize = 8; // pixels tall 
-    sCheckBox.u16ColumnSize = 10; // pixels wide
-  
-    for(u8 i = 0; i < 5; i++){
-      LcdLoadBitmap(&aau8StitchK, &sCheckBox);
-      sCheckBox.u16RowStart +=12;
-    } 
-    */
   
     // load grid
     // grid row 1, 3, 5 (purl all stitches)
@@ -340,13 +336,10 @@ static void UserApp1SM_Idle(void)
     } // if(u8Legend_On ==0)
     else
     {
-      LoadLittleDove(u8current_row, u8current_row);
+      LoadLittleDove(u8row_state, u8current_row);
       u8Legend_On = 0;
     } //else
   } // if(WasButtonPressed)
-
- 
-
 
 
   // load check box at row level, then update the row state
@@ -359,6 +352,7 @@ static void UserApp1SM_Idle(void)
       if(u8AlreadyHeld == 0)
       {
         u8AlreadyHeld = 1;
+        //u8current_row--; // To account for the fact that this already triggered WasButtonPressed but shouldn't have.
         static PixelBlockType sCheckPosition;
         sCheckPosition.u16ColumnStart = 12;
         sCheckPosition.u16RowSize = 8; // pixels tall 
@@ -367,7 +361,7 @@ static void UserApp1SM_Idle(void)
         {
           case 1:
             sCheckPosition.u16RowStart = 48; 
-            if(u8row_state &= 0b00001) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            if(u8row_state & 0b00001) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b11110; // set first bit to 0, other bits remain the same.
               LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
@@ -380,9 +374,9 @@ static void UserApp1SM_Idle(void)
             break;
           case 2:
             sCheckPosition.u16RowStart = 36;
-            if(u8row_state &= 0b00010) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            if(u8row_state & 0b00010) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
-              u8row_state &= 0b11101; // set first bit to 0, other bits remain the same.
+              u8row_state &= 0b11101; // set second bit to 0, other bits remain the same.
               LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
             }
             else
@@ -393,7 +387,7 @@ static void UserApp1SM_Idle(void)
             break;
           case 3:
             sCheckPosition.u16RowStart = 24;
-            if(u8row_state &= 0b00100) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            if(u8row_state & 0b00100) // check if the last bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b11011; // set third bit to 0, other bits remain the same.
               LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
@@ -406,7 +400,7 @@ static void UserApp1SM_Idle(void)
             break;
           case 4:
             sCheckPosition.u16RowStart = 12;
-            if(u8row_state &= 0b01000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            if(u8row_state & 0b01000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b10111; // set fourth bit to 0, other bits remain the same.
               LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
@@ -419,7 +413,7 @@ static void UserApp1SM_Idle(void)
             break;
           case 5:
             sCheckPosition.u16RowStart = 0;
-            if(u8row_state &= 0b10000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
+            if(u8row_state & 0b10000) // check if the bit is already completed. Value will be non-zero if the bit is a one, and zero if the bit is 0
             {
               u8row_state &= 0b01111; // set fifth bit to 0, other bits remain the same.
               LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
