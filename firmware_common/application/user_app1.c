@@ -81,8 +81,31 @@ Function Definitions
 /*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-void LoadLittleDove(u8 u8RowState) {
-    // load row arrow at 1
+void LoadLittleDove(u8 u8RowState, u8 u8RowNum) 
+{
+    //Load check boxes
+      static u8 TempRowState; 
+      TempRowState = u8RowState;
+    
+    for( u8 i=0; i<5; i++)
+    {
+      static PixelBlockType sCheckPosition;
+        sCheckPosition.u16ColumnStart = 12;
+        sCheckPosition.u16RowSize = 8; // pixels tall 
+        sCheckPosition.u16ColumnSize = 10; // pixels wide
+        sCheckPosition.u16RowStart = 48 - 12*i; // start from the top, work our way down.
+        if(TempRowState & 1)
+        {
+          LcdLoadBitmap(&aau8StitchCheck, &sCheckPosition);
+        }
+        else
+        {
+          LcdLoadBitmap(&aau8StitchK, &sCheckPosition);
+        }
+        TempRowState >>= 1;
+    }
+            
+    // load row arrow beside the current row
     static PixelAddressType sPointWSLoc = {U8_LCD_SMALL_FONT_LINE6, U16_LCD_LEFT_MOST_COLUMN};
     u8 au8PointWSStr[] = "W>";
     LcdLoadString(au8PointWSStr, LCD_FONT_SMALL, &sPointWSLoc);
@@ -93,7 +116,7 @@ void LoadLittleDove(u8 u8RowState) {
     LcdLoadString(au8TestString, LCD_FONT_SMALL, &sTestLoc);
   
     // load check boxes
-  
+  /*
     static PixelBlockType sCheckBox;
     sCheckBox.u16RowStart = 0;
     sCheckBox.u16ColumnStart = 12;
@@ -104,6 +127,7 @@ void LoadLittleDove(u8 u8RowState) {
       LcdLoadBitmap(&aau8StitchK, &sCheckBox);
       sCheckBox.u16RowStart +=12;
     } 
+    */
   
     // load grid
     // grid row 1, 3, 5 (purl all stitches)
@@ -176,25 +200,10 @@ void LoadLittleDove(u8 u8RowState) {
     sRow4.u16ColumnStart+=10;
     LcdLoadBitmap(&aau8StitchK, &sRow4);
   
-    // load lines marking place at row 1
-  
-    //static PixelBlockType sUpperRowMark = {(u8)60, (u8)23, (u8)36, (u8)1};
-    //LcdLoadBitmap(aau8RowMark, &sUpperRowMark);
-  
-  
-    //static PixelAddressType sRowMarkUpper = {U8_LCD_SMALL_FONT_LINE6, U16_LCD_LEFT_MOST_COLUMN};
-    //u8 au8RowMark[] = "_____________";
-    //LcdLoadString(au8RowMark, LCD_FONT_SMALL, &sRowMarkUpper);
-    //static PixelAddressType sRowMarkLower = {U8_LCD_SMALL_FONT_LINE7, U16_LCD_LEFT_MOST_COLUMN};
-    //LcdLoadString(au8RowMark, LCD_FONT_SMALL, &sRowMarkLower);
-    
-    // load rectangle around grid
-
 }
 
 void LoadLegend(void)
 {
-
   // Load title strings
   static PixelAddressType sTitleStr1 = {U8_LCD_SMALL_FONT_LINE0, U16_LCD_LEFT_MOST_COLUMN};
   u8 au8TitleStr1[] = "Pattern Repeat Chart";
@@ -237,6 +246,9 @@ void LoadLegend(void)
 
 }
 
+
+
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 /*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -262,7 +274,7 @@ void UserApp1Initialize(void)
   LcdClearScreen();
   
   // ~Load static pattern. 
-  LoadLittleDove(0b00000);
+  LoadLittleDove((u8)0b00000, (u8)1);
 
   
   /* If good initialization, set state to Idle */
@@ -314,8 +326,12 @@ State Machine Function Definitions
 static void UserApp1SM_Idle(void)
 { 
   static u8 u8Legend_On = 0;
+  static u8 u8current_row = 1; // updated based on button1
+  static u8 u8row_state = 0b00000; // updated based on button1
+
   if(WasButtonPressed(BUTTON0)) 
   {
+    ButtonAcknowledge(BUTTON0);
     LcdClearScreen();
     if(u8Legend_On == 0)
     {
@@ -324,15 +340,14 @@ static void UserApp1SM_Idle(void)
     } // if(u8Legend_On ==0)
     else
     {
-      LoadLittleDove(0b0000);
+      LoadLittleDove(u8current_row, u8current_row);
       u8Legend_On = 0;
     } //else
-    ButtonAcknowledge(BUTTON0);
   } // if(WasButtonPressed)
 
-  static u8 u8current_row = 1; // updated based on button1
+ 
 
-  static u8 u8row_state = 0b00000; // updated based on button1
+
 
   // load check box at row level, then update the row state
   static u8 u8AlreadyHeld = 0;
