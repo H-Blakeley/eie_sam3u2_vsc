@@ -345,14 +345,13 @@ static void UserApp1SM_Idle(void)
   // load check box at row level, then update the row state
   static u8 u8AlreadyHeld = 0;
   
-  if(IsButtonHeld(BUTTON1, 2000)) 
+  if(IsButtonHeld(BUTTON1, 1500)) 
   {
     if(!(u8Legend_On)) 
     {
       if(u8AlreadyHeld == 0)
       {
         u8AlreadyHeld = 1;
-        //u8current_row--; // To account for the fact that this already triggered WasButtonPressed but shouldn't have.
         static PixelBlockType sCheckPosition;
         sCheckPosition.u16ColumnStart = 12;
         sCheckPosition.u16RowSize = 8; // pixels tall 
@@ -432,6 +431,7 @@ static void UserApp1SM_Idle(void)
 
   if(WasButtonPressed(BUTTON1))
   {
+    if(!IsButtonPressed(BUTTON1)){
     ButtonAcknowledge(BUTTON1);
     if(u8Legend_On == 0)
     {
@@ -468,7 +468,7 @@ static void UserApp1SM_Idle(void)
       }
    }
 
-
+  }//if(!IsButtonPressed(BUTTON1))
   } // if(WasButtonPressed(BUTTON1))
 
 
